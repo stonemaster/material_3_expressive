@@ -17,6 +17,8 @@ enum SplitButtonM3EEmphasis { filled, tonal, elevated, outlined, text }
 /// - geometricCenter → no offset, purely geometric center
 enum SplitButtonM3ETrailingAlignment { opticalCenter, geometricCenter }
 
+enum SplitButtonM3EMenuPosition { below, above }
+
 /// Public helpers to access tokens without exposing numbers.
 extension SplitButtonM3ETokensX on SplitButtonM3ESize {
   double get height => SplitButtonM3ETokens.height[this]!;

@@ -27,6 +27,7 @@ class SplitButtonM3E<T> extends StatefulWidget {
     this.trailingTooltip,
     this.enabled = true,
     this.menuBuilder,
+    this.menuPosition = SplitButtonM3EMenuPosition.below,
   }) : assert(
          items != null || menuBuilder != null,
          'Provide either `items` or `menuBuilder`.',
@@ -59,6 +60,9 @@ class SplitButtonM3E<T> extends StatefulWidget {
 
   /// Trailing chevron alignment strategy.
   final SplitButtonM3ETrailingAlignment trailingAlignment;
+
+  /// Whether the menu opens below or above the trailing segment.
+  final SplitButtonM3EMenuPosition menuPosition;
 
   /// Optional tooltips.
   final String? leadingTooltip;
@@ -442,26 +446,25 @@ class _SplitButtonM3EState<T> extends State<SplitButtonM3E<T>> {
       targetBox.size.height,
     );
 
-    // Place the menu just below the trailing segment with a small vertical gap,
-    // keeping horizontal alignment anchored to the trailing edge.
+    // Place the menu with a small vertical gap.
     const double _kMenuVerticalOffset = 4.0;
-    final double top = targetRect.bottom + _kMenuVerticalOffset;
+    final double top = switch (widget.menuPosition) {
+      SplitButtonM3EMenuPosition.below =>
+        targetRect.bottom + _kMenuVerticalOffset,
+      SplitButtonM3EMenuPosition.above => targetRect.top - _kMenuVerticalOffset,
+    };
 
     final TextDirection textDir = Directionality.of(context);
-    late double left;
-    late double right;
 
-    if (textDir == TextDirection.ltr) {
-      final double endX = targetRect.right; // trailing edge in LTR
-      left = 0.0;
-      right = overlay.size.width - endX; // align menu's right edge to endX
-    } else {
-      final double startX = targetRect.left; // trailing edge in RTL
-      left = startX; // align menu's left edge to startX
-      right = 0.0;
-    }
+    // Anchor X at the *visual* chevron edge, not the trailing container edge.
+    final double anchorX = (textDir == TextDirection.ltr)
+        ? targetRect.right
+        : targetRect.left;
 
-    return RelativeRect.fromLTRB(left, top, right, overlay.size.height - top);
+    // Provide showMenu an anchor rect (0-width) at the desired x, and top y.
+    final Rect anchorRect = Rect.fromLTWH(anchorX, top, 0.0, 0.0);
+
+    return RelativeRect.fromRect(anchorRect, Offset.zero & overlay.size);
   }
 }
 
