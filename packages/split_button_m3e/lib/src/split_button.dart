@@ -28,6 +28,9 @@ class SplitButtonM3E<T> extends StatefulWidget {
     this.enabled = true,
     this.menuBuilder,
     this.menuPosition = SplitButtonM3EMenuPosition.below,
+    this.foregroundColor,
+    this.backgroundColor,
+    this.elevation,
   }) : assert(
          items != null || menuBuilder != null,
          'Provide either `items` or `menuBuilder`.',
@@ -67,6 +70,17 @@ class SplitButtonM3E<T> extends StatefulWidget {
   /// Optional tooltips.
   final String? leadingTooltip;
   final String? trailingTooltip;
+
+  /// This setting overrides the preset color.
+  final Color? foregroundColor;
+
+  /// This setting overrides the preset color.
+  final Color? backgroundColor;
+
+  /// This setting overrides the preset elevation.
+  /// Note: this is only effective when emphasis is
+  /// [SplitButtonM3EEmphasis.filled]
+  final double? elevation;
 
   /// Set to false to disable both segments.
   final bool enabled;
@@ -298,21 +312,41 @@ class _SplitButtonM3EState<T> extends State<SplitButtonM3E<T>> {
 
     switch (widget.emphasis) {
       case SplitButtonM3EEmphasis.filled:
-        return (cs.primary, cs.onPrimary, null, null);
+        return (
+          widget.backgroundColor ?? cs.primary,
+          widget.foregroundColor ?? cs.onPrimary,
+          null,
+          null,
+        );
       case SplitButtonM3EEmphasis.tonal:
-        return (cs.secondaryContainer, cs.onSecondaryContainer, null, null);
+        return (
+          widget.backgroundColor ?? cs.secondaryContainer,
+          widget.foregroundColor ?? cs.onSecondaryContainer,
+          null,
+          null,
+        );
       case SplitButtonM3EEmphasis.elevated:
         return (
-          theme.colorScheme.surfaceContainerHigh,
-          cs.onSurface,
+          widget.backgroundColor ?? theme.colorScheme.surfaceContainerHigh,
+          widget.foregroundColor ?? cs.onSurface,
           null,
-          1.0,
+          widget.elevation ?? 1.0,
         );
       case SplitButtonM3EEmphasis.outlined:
         final side = BorderSide(color: cs.outline);
-        return (Colors.transparent, cs.primary, side, null);
+        return (
+          widget.backgroundColor ?? Colors.transparent,
+          widget.foregroundColor ?? cs.primary,
+          side,
+          null,
+        );
       case SplitButtonM3EEmphasis.text:
-        return (Colors.transparent, cs.primary, null, null);
+        return (
+          widget.backgroundColor ?? Colors.transparent,
+          widget.foregroundColor ?? cs.primary,
+          null,
+          null,
+        );
     }
   }
 
